@@ -40,41 +40,23 @@ class Settings(BaseSettings):
     
     # CORS Configuration
     # For native mobile apps, CORS is less restrictive
-    BACKEND_CORS_ORIGINS: List[str] = [
-        "http://localhost:3000",      # Web development
-        "http://localhost:8081",      # Expo development
-        "exp://192.168.1.100:8081",  # Expo on local network
-        "*"                           # Allow all origins for native apps
-    ]
+    BACKEND_CORS_ORIGINS: str = "*"
     
     @property
     def is_production(self) -> bool:
         """Check if running in production environment"""
         return self.RAILWAY_ENVIRONMENT is not None or not self.DEBUG
     
-    @validator("BACKEND_CORS_ORIGINS", pre=True)
-    def assemble_cors_origins(cls, v: str | List[str]) -> List[str]:
-        if isinstance(v, str):
-            # Handle JSON string format from environment variables
-            if v.startswith("[") and v.endswith("]"):
-                import json
-                try:
-                    return json.loads(v)
-                except json.JSONDecodeError:
-                    # If JSON parsing fails, treat as comma-separated string
-                    v = v.strip("[]").replace('"', '').replace("'", "")
-                    return [i.strip() for i in v.split(",") if i.strip()]
-            # Handle comma-separated string
-            elif "," in v:
-                return [i.strip() for i in v.split(",") if i.strip()]
-            # Handle single origin
-            else:
-                return [v.strip()] if v.strip() else ["*"]
-        elif isinstance(v, list):
-            return v
-        else:
-            # Default to allow all for native apps
+    @property
+    def cors_origins_list(self) -> List[str]:
+        """Convert CORS origins string to list for FastAPI CORS middleware"""
+        if self.BACKEND_CORS_ORIGINS == "*":
             return ["*"]
+        elif "," in self.BACKEND_CORS_ORIGINS:
+            return [origin.strip() for origin in self.BACKEND_CORS_ORIGINS.split(",") if origin.strip()]
+        else:
+            return [self.BACKEND_CORS_ORIGINS] if self.BACKEND_CORS_ORIGINS else ["*"]
+    
     
     # Redis Configuration
     REDIS_URL: str = "redis://localhost:6379/0"
