@@ -39,10 +39,12 @@ class Settings(BaseSettings):
     JWT_REFRESH_TOKEN_EXPIRE_DAYS: int = 7
     
     # CORS Configuration
+    # For native mobile apps, CORS is less restrictive
     BACKEND_CORS_ORIGINS: List[str] = [
-        "http://localhost:3000",
-        "http://localhost:8081",
-        "exp://192.168.1.100:8081"
+        "http://localhost:3000",      # Web development
+        "http://localhost:8081",      # Expo development
+        "exp://192.168.1.100:8081",  # Expo on local network
+        "*"                           # Allow all origins for native apps
     ]
     
     @property

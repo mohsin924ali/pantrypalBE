@@ -50,8 +50,8 @@ DEBUG=false
 PROJECT_NAME=PentryPal API
 PROJECT_VERSION=1.0.0
 
-# CORS Origins (add your frontend domains)
-BACKEND_CORS_ORIGINS=["https://your-frontend-domain.com","http://localhost:3000"]
+# CORS Origins (for native mobile apps, use "*" to allow all origins)
+BACKEND_CORS_ORIGINS=["*"]
 ```
 
 #### Optional Variables
@@ -98,12 +98,34 @@ Alternatively, the migrations will run automatically if you're using the Procfil
 2. Visit `https://your-service-url.railway.app/health` - should return `{"status": "healthy"}`
 3. Visit `https://your-service-url.railway.app/api/v1/docs` for API documentation
 
+## Native Mobile App Configuration
+
+### CORS for Mobile Apps
+Since your frontend is a native mobile app, CORS restrictions are different:
+
+- **Native apps don't enforce CORS** like web browsers do
+- **Use `"*"` for CORS origins** to allow all requests
+- **This is safe for mobile apps** as they don't have the same security model as web browsers
+
+### Environment Variables for Mobile Apps
+```bash
+# For native mobile apps
+BACKEND_CORS_ORIGINS=["*"]
+```
+
+### Mobile App API Integration
+Your mobile app can connect directly to:
+```
+https://your-service-url.railway.app/api/v1/
+```
+
 ## Important Security Notes
 
 1. **JWT_SECRET_KEY**: Generate a strong, unique secret key for production
-2. **CORS Origins**: Only include your actual frontend domains
+2. **CORS Origins**: For native mobile apps, using `"*"` is acceptable and recommended
 3. **Database**: Railway PostgreSQL is automatically secured
 4. **Environment Variables**: Never commit sensitive data to your repository
+5. **Mobile Security**: Rely on JWT tokens and API authentication, not CORS
 
 ## File Upload Configuration
 
