@@ -1,0 +1,49 @@
+# Development files
+.env
+.env.local
+.env.example
+
+# Documentation
+README.md
+API_DOCUMENTATION.md
+DATABASE_CLEANUP.md
+
+# Docker files (Railway uses Dockerfile but not compose)
+docker-compose.yml
+
+# Testing files
+test_*.py
+*_test.py
+tests/
+
+# Development tools
+.vscode/
+.idea/
+*.log
+
+# Database files
+*.db
+*.sqlite
+
+# Cache and temporary files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.pytest_cache/
+
+# Uploads (these should be handled by Railway's persistent storage)
+uploads/
+
+# Git
+.git/
+.gitignore
+
+# Cleanup scripts
+cleanup.sh
+cleanup_config.json
+database_cleanup.py
+
+# Postman collection
+*.postman_collection.json
