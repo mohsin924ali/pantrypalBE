@@ -30,7 +30,29 @@ Your application needs these services:
 1. Click "New Service" → "Database" → "Redis"
 2. This enables full WebSocket functionality
 
-### 3. Configure Environment Variables
+### 3. Generate JWT Secret Key
+
+**IMPORTANT**: You must generate a secure JWT secret key for production. Here are several ways to do it:
+
+#### Method 1: Using Python (Recommended)
+```bash
+python3 -c "import secrets; print('JWT_SECRET_KEY=' + secrets.token_urlsafe(64))"
+```
+
+#### Method 2: Using OpenSSL
+```bash
+openssl rand -base64 64
+```
+
+#### Method 3: Online Generator
+Visit: https://generate-secret.vercel.app/64
+
+**Example generated key:**
+```
+JWT_SECRET_KEY=XE-_Pziv1GyFAHmILR15eMgb-_aAYzsZ-alfKKiqpg82jtBLSDezg3nGV0xcEqfLYUjk7Ao2PBVCA_Fr-1arMQ
+```
+
+### 4. Configure Environment Variables
 
 In your Railway project dashboard, go to your main service and set these variables:
 
@@ -42,7 +64,7 @@ DATABASE_URL=${{Postgres.DATABASE_URL}}
 # Redis (automatically set by Railway Redis service)
 REDIS_URL=${{Redis.REDIS_URL}}
 
-# JWT Security (IMPORTANT: Generate a secure key)
+# JWT Security (IMPORTANT: Generate a secure key - see below)
 JWT_SECRET_KEY=your-super-secure-jwt-key-change-this-now
 
 # API Configuration
@@ -74,13 +96,13 @@ JWT_ACCESS_TOKEN_EXPIRE_MINUTES=30
 JWT_REFRESH_TOKEN_EXPIRE_DAYS=7
 ```
 
-### 4. Deploy
+### 5. Deploy
 
 1. Railway will automatically deploy when you push to your connected branch
 2. Monitor the deployment in the Railway dashboard
 3. Check logs for any errors
 
-### 5. Run Database Migrations
+### 6. Run Database Migrations
 
 After the first deployment, you need to run database migrations:
 
@@ -92,7 +114,7 @@ After the first deployment, you need to run database migrations:
 
 Alternatively, the migrations will run automatically if you're using the Procfile.
 
-### 6. Verify Deployment
+### 7. Verify Deployment
 
 1. Check your service URL in Railway dashboard
 2. Visit `https://your-service-url.railway.app/health` - should return `{"status": "healthy"}`
