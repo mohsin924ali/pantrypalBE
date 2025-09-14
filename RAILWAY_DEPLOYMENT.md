@@ -73,7 +73,7 @@ PROJECT_NAME=PentryPal API
 PROJECT_VERSION=1.0.0
 
 # CORS Origins (for native mobile apps, use "*" to allow all origins)
-BACKEND_CORS_ORIGINS=["*"]
+BACKEND_CORS_ORIGINS=*
 ```
 
 #### Optional Variables
@@ -131,8 +131,12 @@ Since your frontend is a native mobile app, CORS restrictions are different:
 
 ### Environment Variables for Mobile Apps
 ```bash
-# For native mobile apps
-BACKEND_CORS_ORIGINS=["*"]
+# For native mobile apps (choose one format):
+BACKEND_CORS_ORIGINS=*                    # Single wildcard (recommended)
+# OR
+BACKEND_CORS_ORIGINS=["*"]               # JSON array format
+# OR  
+BACKEND_CORS_ORIGINS=*,localhost:3000    # Comma-separated
 ```
 
 ### Mobile App API Integration

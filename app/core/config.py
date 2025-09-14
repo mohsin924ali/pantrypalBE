@@ -54,11 +54,27 @@ class Settings(BaseSettings):
     
     @validator("BACKEND_CORS_ORIGINS", pre=True)
     def assemble_cors_origins(cls, v: str | List[str]) -> List[str]:
-        if isinstance(v, str) and not v.startswith("["):
-            return [i.strip() for i in v.split(",")]
-        elif isinstance(v, (list, str)):
+        if isinstance(v, str):
+            # Handle JSON string format from environment variables
+            if v.startswith("[") and v.endswith("]"):
+                import json
+                try:
+                    return json.loads(v)
+                except json.JSONDecodeError:
+                    # If JSON parsing fails, treat as comma-separated string
+                    v = v.strip("[]").replace('"', '').replace("'", "")
+                    return [i.strip() for i in v.split(",") if i.strip()]
+            # Handle comma-separated string
+            elif "," in v:
+                return [i.strip() for i in v.split(",") if i.strip()]
+            # Handle single origin
+            else:
+                return [v.strip()] if v.strip() else ["*"]
+        elif isinstance(v, list):
             return v
-        raise ValueError(v)
+        else:
+            # Default to allow all for native apps
+            return ["*"]
     
     # Redis Configuration
     REDIS_URL: str = "redis://localhost:6379/0"
