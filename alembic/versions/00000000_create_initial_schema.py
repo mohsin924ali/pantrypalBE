@@ -73,10 +73,10 @@ def upgrade() -> None:
     # Create item_categories table
     op.create_table('item_categories',
         sa.Column('id', UUID(as_uuid=True), primary_key=True),
-        sa.Column('name', sa.String(255), unique=True, nullable=False),
+        sa.Column('name', sa.String(100), unique=True, nullable=False, index=True),
         sa.Column('color', sa.String(7), nullable=False),
         sa.Column('icon', sa.String(50), nullable=True),
-        sa.Column('is_default', sa.Boolean, default=False, nullable=False),
+        sa.Column('is_system', sa.Boolean, default=False, nullable=False),
         sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.func.now())
     )
 
