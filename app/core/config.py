@@ -33,7 +33,7 @@ class Settings(BaseSettings):
             if v.startswith("postgres://"):
                 return v.replace("postgres://", "postgresql://", 1)
             return v
-        return f"postgresql+psycopg://{values.get('DATABASE_USER')}:{values.get('DATABASE_PASSWORD')}@{values.get('DATABASE_HOST')}:{values.get('DATABASE_PORT')}/{values.get('DATABASE_NAME')}"
+        return f"postgresql://{values.get('DATABASE_USER')}:{values.get('DATABASE_PASSWORD')}@{values.get('DATABASE_HOST')}:{values.get('DATABASE_PORT')}/{values.get('DATABASE_NAME')}"
     
     # JWT Configuration
     JWT_SECRET_KEY: str = "your-super-secret-jwt-key-change-this-in-production"
