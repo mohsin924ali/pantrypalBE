@@ -28,7 +28,10 @@ class Settings(BaseSettings):
     
     @validator("DATABASE_URL", pre=True)
     def assemble_db_connection(cls, v: Optional[str], values: dict) -> str:
-        if isinstance(v, str):
+        if isinstance(v, str) and v:
+            # If URL is provided and starts with postgres://, convert to postgresql://
+            if v.startswith("postgres://"):
+                return v.replace("postgres://", "postgresql://", 1)
             return v
         return f"postgresql+psycopg://{values.get('DATABASE_USER')}:{values.get('DATABASE_PASSWORD')}@{values.get('DATABASE_HOST')}:{values.get('DATABASE_PORT')}/{values.get('DATABASE_NAME')}"
     

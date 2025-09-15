@@ -1,4 +1,4 @@
-FROM python:3.13-slim
+FROM python:3.11-slim
 
 # Set working directory
 WORKDIR /app
@@ -21,6 +21,9 @@ COPY . .
 
 # Create uploads directory
 RUN mkdir -p uploads
+
+# Make start script executable
+RUN chmod +x start.sh
 
 # Create non-root user for security
 RUN adduser --disabled-password --gecos '' appuser && chown -R appuser:appuser /app

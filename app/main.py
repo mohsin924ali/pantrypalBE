@@ -1,6 +1,7 @@
 """
 FastAPI main application
 """
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
@@ -10,10 +11,22 @@ from app.api.v1.api import api_router
 from app.core.websocket import connection_manager
 import os
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    await connection_manager.initialize_redis()
+    print("🚀 PentryPal API started successfully")
+    yield
+    # Shutdown
+    await connection_manager.cleanup()
+    print("👋 PentryPal API shutdown complete")
+
 # Create FastAPI application
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.PROJECT_VERSION,
+    lifespan=lifespan,
     description="""
     ## PentryPal API - Collaborative Grocery & Pantry Management
 
@@ -92,18 +105,6 @@ if not os.path.exists(uploads_dir):
 app.mount("/uploads", StaticFiles(directory=uploads_dir), name="uploads")
 
 
-@app.on_event("startup")
-async def startup_event():
-    """Initialize services on startup"""
-    await connection_manager.initialize_redis()
-    print("🚀 PentryPal API started successfully")
-
-
-@app.on_event("shutdown")
-async def shutdown_event():
-    """Cleanup on shutdown"""
-    await connection_manager.cleanup()
-    print("👋 PentryPal API shutdown complete")
 
 
 @app.get("/")
