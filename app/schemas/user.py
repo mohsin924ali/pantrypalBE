@@ -17,6 +17,8 @@ class UserBase(BaseModel):
     
     @validator('phone')
     def validate_phone(cls, v):
+        if v is None:
+            return v
         # Phone number validation (digits only, 7-15 characters)
         phone_pattern = re.compile(r'^[0-9]{7,15}$')
         if not phone_pattern.match(v):
@@ -25,6 +27,8 @@ class UserBase(BaseModel):
     
     @validator('country_code')
     def validate_country_code(cls, v):
+        if v is None:
+            return v
         # Basic country code validation (2-4 uppercase letters)
         if not re.match(r'^[A-Z]{2,4}$', v):
             raise ValueError('Country code must be 2-4 uppercase letters')
