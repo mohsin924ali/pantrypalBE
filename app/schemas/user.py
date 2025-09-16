@@ -10,8 +10,8 @@ import re
 
 class UserBase(BaseModel):
     email: EmailStr = Field(..., description="User's email address")
-    phone: str = Field(..., min_length=7, max_length=15, description="User's phone number (without country code)")
-    country_code: str = Field(..., min_length=2, max_length=4, description="ISO country code")
+    phone: Optional[str] = Field(None, min_length=7, max_length=15, description="User's phone number (without country code)")
+    country_code: Optional[str] = Field(None, min_length=2, max_length=4, description="ISO country code")
     name: str = Field(..., min_length=2, max_length=255)
     avatar_url: Optional[str] = None
     

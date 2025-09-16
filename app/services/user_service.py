@@ -55,11 +55,11 @@ class UserService:
         # Hash password
         password_hash = get_password_hash(user_data.password)
         
-        # Create user
+        # Create user with default values for optional fields
         db_user = User(
             email=user_data.email,
-            phone=user_data.phone,
-            country_code=user_data.country_code,
+            phone=user_data.phone or "0000000000",  # Default phone if not provided
+            country_code=user_data.country_code or "US",  # Default country if not provided
             name=user_data.name,
             avatar_url=user_data.avatar_url,
             password_hash=password_hash,
