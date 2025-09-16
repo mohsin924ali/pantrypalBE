@@ -51,8 +51,9 @@ def upgrade() -> None:
         sa.Column('id', UUID(as_uuid=True), primary_key=True),
         sa.Column('user_id', UUID(as_uuid=True), sa.ForeignKey('users.id'), unique=True, nullable=False),
         sa.Column('biometric_enabled', sa.Boolean, default=False, nullable=False),
-        sa.Column('session_timeout_minutes', sa.Integer, default=30, nullable=False),
-        sa.Column('auto_lock_enabled', sa.Boolean, default=True, nullable=False),
+        sa.Column('login_alerts', sa.Boolean, default=True, nullable=False),
+        sa.Column('session_timeout', sa.Integer, default=1800, nullable=False),
+        sa.Column('max_sessions', sa.Integer, default=5, nullable=False),
         sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.func.now()),
         sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.func.now())
     )
@@ -60,14 +61,14 @@ def upgrade() -> None:
     # Create biometric_keys table
     op.create_table('biometric_keys',
         sa.Column('id', UUID(as_uuid=True), primary_key=True),
-        sa.Column('user_id', UUID(as_uuid=True), sa.ForeignKey('users.id'), nullable=False),
+        sa.Column('security_settings_id', UUID(as_uuid=True), sa.ForeignKey('security_settings.id'), nullable=False),
         sa.Column('device_id', sa.String(255), nullable=False),
-        sa.Column('key_hash', sa.String(255), nullable=False),
-        sa.Column('key_type', sa.String(50), nullable=False),
+        sa.Column('public_key', sa.Text, nullable=False),
+        sa.Column('key_type', sa.String(50), default='biometric', nullable=False),
         sa.Column('is_active', sa.Boolean, default=True, nullable=False),
-        sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.func.now()),
         sa.Column('last_used_at', sa.DateTime(timezone=True), nullable=True),
-        sa.UniqueConstraint('device_id', 'key_type', name='unique_device_key_type')
+        sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.func.now()),
+        sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.func.now())
     )
 
     # Create item_categories table
