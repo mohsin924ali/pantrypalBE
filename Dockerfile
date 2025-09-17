@@ -22,15 +22,15 @@ COPY . .
 # Create uploads directory
 RUN mkdir -p uploads
 
-# Make start script executable
-RUN chmod +x start.sh
+# Make start scripts executable
+RUN chmod +x start.sh railway-start.sh
 
 # Create non-root user for security
 RUN adduser --disabled-password --gecos '' appuser && chown -R appuser:appuser /app
 USER appuser
 
-# Expose port
+# Expose port (Railway will set PORT dynamically)
 EXPOSE 8000
 
-# Run migrations, populate default data, then start the application
-CMD ["sh", "-c", "python -m alembic upgrade head && python init_db.py && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+# Use robust Railway startup script
+CMD ["./railway-start.sh"]
