@@ -24,11 +24,14 @@ async def lifespan(app: FastAPI):
         # Test database connection (optional - don't fail if DB is not available)
         try:
             from app.db.database import engine
-            with engine.connect() as conn:
-                from sqlalchemy import text
-                result = conn.execute(text("SELECT 1"))
-                result.fetchone()
-            print("✅ Database connection successful")
+            if engine is not None:
+                with engine.connect() as conn:
+                    from sqlalchemy import text
+                    result = conn.execute(text("SELECT 1"))
+                    result.fetchone()
+                print("✅ Database connection successful")
+            else:
+                print("⚠️ Database engine is None - database not available")
         except Exception as db_error:
             print(f"⚠️ Database connection failed (continuing anyway): {str(db_error)}")
             # Don't raise here - let the app start and handle DB errors per endpoint
