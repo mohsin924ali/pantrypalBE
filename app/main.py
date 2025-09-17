@@ -15,12 +15,48 @@ import os
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
-    await connection_manager.initialize_redis()
-    print("🚀 PentryPal API started successfully")
+    try:
+        print("🔄 Initializing PentryPal API...")
+        print(f"🔧 Debug mode: {settings.DEBUG}")
+        print(f"🔧 Production mode: {settings.is_production}")
+        print(f"🔧 REDIS_URL configured: {'Yes' if settings.REDIS_URL else 'No'}")
+        
+        # Test database connection (optional - don't fail if DB is not available)
+        try:
+            from app.db.database import engine
+            with engine.connect() as conn:
+                from sqlalchemy import text
+                result = conn.execute(text("SELECT 1"))
+                result.fetchone()
+            print("✅ Database connection successful")
+        except Exception as db_error:
+            print(f"⚠️ Database connection failed (continuing anyway): {str(db_error)}")
+            # Don't raise here - let the app start and handle DB errors per endpoint
+        
+        # Initialize Redis with error handling
+        try:
+            await connection_manager.initialize_redis()
+        except Exception as redis_error:
+            print(f"⚠️ Redis initialization failed (continuing without Redis): {str(redis_error)}")
+            # Don't raise - the connection_manager.initialize_redis() already handles this gracefully
+        
+        print("🚀 PentryPal API started successfully")
+        
+    except Exception as e:
+        print(f"❌ Critical startup error: {str(e)}")
+        import traceback
+        print(f"❌ Traceback: {traceback.format_exc()}")
+        # Only raise for truly critical errors - most issues should be handled gracefully
+        print("⚠️ Continuing startup despite error...")
+    
     yield
+    
     # Shutdown
-    await connection_manager.cleanup()
-    print("👋 PentryPal API shutdown complete")
+    try:
+        await connection_manager.cleanup()
+        print("👋 PentryPal API shutdown complete")
+    except Exception as cleanup_error:
+        print(f"⚠️ Cleanup error (ignoring): {str(cleanup_error)}")
 
 # Create FastAPI application
 app = FastAPI(
