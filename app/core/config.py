@@ -38,8 +38,8 @@ class Settings(BaseSettings):
     # JWT Configuration
     JWT_SECRET_KEY: str = "your-super-secret-jwt-key-change-this-in-production"
     JWT_ALGORITHM: str = "HS256"
-    JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
-    JWT_REFRESH_TOKEN_EXPIRE_DAYS: int = 7
+    JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 720  # 12 hours (12 * 60)
+    JWT_REFRESH_TOKEN_EXPIRE_DAYS: int = 30     # 30 days (extended for better UX)
     
     # CORS Configuration
     # For native mobile apps, CORS is less restrictive
